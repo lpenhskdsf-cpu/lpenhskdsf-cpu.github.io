@@ -23,6 +23,8 @@ body{
     text-align:center;
     width:320px;
     box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 input{
@@ -32,7 +34,6 @@ input{
     border-radius:8px;
     border:1px solid #ccc;
     text-align:center;
-    outline:none;
 }
 
 button{
@@ -59,19 +60,19 @@ button:hover{
 
 .hidden{ display:none; }
 
-.fade{
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn{
-    from{ opacity:0; transform:translateY(10px); }
-    to{ opacity:1; transform:translateY(0); }
+#error{
+    color:red;
+    margin-top:10px;
 }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
+
+//////////////////////////////
+// CONFIG
+//////////////////////////////
 const CONFIG = {
     emailjs: {
         publicKey: "la5JMWYpdYlxk6b3a",
@@ -90,24 +91,35 @@ emailjs.init(CONFIG.emailjs.publicKey);
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    //////////////////////////
+    // LOGIN
+    //////////////////////////
     window.checkPassword = function(){
 
         const input = document.getElementById("password").value;
         const error = document.getElementById("error");
 
         if(input === CONFIG.security.password){
+
             error.textContent = "";
             document.getElementById("loginBox").classList.add("hidden");
             document.getElementById("questionBox").classList.remove("hidden");
+
         } else {
             error.textContent = "Mot de passe incorrect";
         }
     }
 
+    //////////////////////////
+    // ENTER clavier
+    //////////////////////////
     document.addEventListener("keydown", (e)=>{
         if(e.key === "Enter") checkPassword();
     });
 
+    //////////////////////////
+    // REPONSE
+    //////////////////////////
     window.answer = function(choice){
 
         document.getElementById("questionBox").classList.add("hidden");
@@ -125,7 +137,27 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+    //////////////////////////
+    // BOUTON NON QUI FUIT
+    //////////////////////////
+    window.moveNo = function(){
+
+        const btn = document.getElementById("noBtn");
+        const box = document.getElementById("questionBox");
+
+        const maxX = box.clientWidth - 100;
+        const maxY = box.clientHeight - 60;
+
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        btn.style.position = "absolute";
+        btn.style.left = x + "px";
+        btn.style.top = y + "px";
+    }
+
 });
+
 </script>
 
 </head>
@@ -135,9 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- LOGIN -->
 <div class="card" id="loginBox">
     <h2>Accès protégé</h2>
-    <input type="password" id="password" placeholder="Mot de passe">
+    <input type="password" id="password" placeholder="Votre Date D'anniversaire (JJ/MM)">
     <button onclick="checkPassword()">Entrer</button>
-    <p id="error" style="color:red;"></p>
+    <div id="error"></div>
 </div>
 
 <!-- QUESTION -->
@@ -146,7 +178,12 @@ document.addEventListener("DOMContentLoaded", () => {
     <p>Veux-tu continuer ?</p>
 
     <button class="btn-yes" onclick="answer('OUI')">OUI</button>
-    <button class="btn-no" onclick="answer('NON')">NON</button>
+
+    <button class="btn-no" id="noBtn"
+        onmouseover="moveNo()"
+        onclick="moveNo()">
+        NON
+    </button>
 </div>
 
 <!-- RESULT -->
