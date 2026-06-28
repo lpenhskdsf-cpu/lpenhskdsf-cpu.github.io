@@ -96,14 +96,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const dateInput = document.getElementById("dateChoice");
     const timeInput = document.getElementById("timeChoice");
     const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
 
     const startBlocked = "2026-07-30";
     const endBlocked = "2026-08-21";
 
-    // reset champs à chaque ouverture
+    // reset
     dateInput.value = "";
     timeInput.value = "";
 
+    // validation
     function checkFormValidity(){
 
         const date = dateInput.value;
@@ -116,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if(date >= startBlocked && date <= endBlocked) valid = false;
 
         yesBtn.disabled = !valid;
+        noBtn.disabled = !valid;
     }
 
     dateInput.addEventListener("input", checkFormValidity);
@@ -176,10 +179,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    // NON qui fuit
+    // NON qui fuit seulement si valide
     window.moveNo = function(){
 
-        const btn = document.getElementById("noBtn");
+        if(noBtn.disabled) return;
+
         const box = document.getElementById("questionBox");
 
         const maxX = box.clientWidth - 100;
@@ -188,9 +192,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const x = Math.random() * maxX;
         const y = Math.random() * maxY;
 
-        btn.style.position = "absolute";
-        btn.style.left = x + "px";
-        btn.style.top = y + "px";
+        noBtn.style.position = "absolute";
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
     }
 
 });
@@ -226,9 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
         OUI
     </button>
 
-    <button class="btn-no" id="noBtn"
-        onmouseover="moveNo()"
-        onclick="moveNo()">
+    <button class="btn-no" id="noBtn" onclick="moveNo()" disabled>
         NON
     </button>
 </div>
