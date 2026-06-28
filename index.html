@@ -93,9 +93,41 @@ emailjs.init(CONFIG.emailjs.publicKey);
 <!-- LOGIN -->
 <div class="card" id="loginBox">
     <h2>Accès protégé</h2>
+
     <input type="password" id="password" placeholder="Mot de passe">
+
     <button onclick="checkPassword()">Entrer</button>
+
+    <p id="error" style="color:#ff6b6b;"></p>
 </div>
+
+<script>
+
+function checkPassword(){
+
+    const input = document.getElementById("password").value;
+    const error = document.getElementById("error");
+
+    if(input === CONFIG.security.password){
+
+        error.textContent = "";
+
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("questionBox").classList.remove("hidden");
+
+    } else {
+        error.textContent = "Mot de passe incorrect";
+    }
+}
+
+// BONUS : entrer avec la touche "Entrée"
+document.addEventListener("keydown", function(event){
+    if(event.key === "Enter"){
+        checkPassword();
+    }
+});
+
+</script>
 
 <!-- QUESTION -->
 <div class="card hidden" id="questionBox">
@@ -113,19 +145,6 @@ emailjs.init(CONFIG.emailjs.publicKey);
 
 <script>
 
-function checkPassword(){
-
-    let input = document.getElementById("password").value;
-
-    if(input === CONFIG.security.password){
-
-        document.getElementById("loginBox").classList.add("hidden");
-        document.getElementById("questionBox").classList.remove("hidden");
-
-    } else {
-        alert("Mot de passe incorrect");
-    }
-}
 
 function answer(choice){
 
