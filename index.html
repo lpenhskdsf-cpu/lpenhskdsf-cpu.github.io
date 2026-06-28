@@ -91,6 +91,25 @@ emailjs.init(CONFIG.emailjs.publicKey);
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    const dateInput = document.getElementById("dateChoice");
+
+    // min/max global (optionnel)
+    dateInput.min = "2026-01-01";
+    dateInput.max = "2026-12-31";
+    
+    dateInput.addEventListener("input", () => {
+    
+        const selected = new Date(dateInput.value);
+    
+        const startBlocked = new Date("2026-07-30");
+        const endBlocked = new Date("2026-08-21");
+    
+        if(selected >= startBlocked && selected <= endBlocked){
+            alert("Cette période est indisponible ❌");
+            dateInput.value = "";
+        }
+    });
+
     //////////////////////////
     // LOGIN
     //////////////////////////
