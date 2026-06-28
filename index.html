@@ -58,6 +58,11 @@ button:hover{
 .btn-yes:hover{ background:#3e8e41; }
 .btn-no:hover{ background:#d32f2f; }
 
+button:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+}
+
 .hidden{ display:none; }
 
 #error{
@@ -70,9 +75,6 @@ button:hover{
 
 <script>
 
-//////////////////////////////
-// CONFIG
-//////////////////////////////
 const CONFIG = {
     emailjs: {
         publicKey: "la5JMWYpdYlxk6b3a",
@@ -90,35 +92,38 @@ const CONFIG = {
 emailjs.init(CONFIG.emailjs.publicKey);
 
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     const dateInput = document.getElementById("dateChoice");
     const timeInput = document.getElementById("timeChoice");
+    const yesBtn = document.getElementById("yesBtn");
 
-    // sécurité : vérifier que les éléments existent
-    if(dateInput) dateInput.value = "";
-    if(timeInput) timeInput.value = "";
-    
-    // bornes interdites (format ISO correct)
     const startBlocked = "2026-07-30";
     const endBlocked = "2026-08-21";
-    
-    // min/max global
-    dateInput.min = "2026-01-01";
-    dateInput.max = "2026-12-31";
-    
-    dateInput.addEventListener("input", () => {
-    
-        const selected = dateInput.value;
-    
-        if(selected >= startBlocked && selected <= endBlocked){
-            alert("Cette période n'est pas disponible ❌");
-            dateInput.value = "";
-        }
-    });
 
-    //////////////////////////
+    // reset champs à chaque ouverture
+    dateInput.value = "";
+    timeInput.value = "";
+
+    function checkFormValidity(){
+
+        const date = dateInput.value;
+        const time = timeInput.value;
+
+        let valid = true;
+
+        if(!date || !time) valid = false;
+
+        if(date >= startBlocked && date <= endBlocked) valid = false;
+
+        yesBtn.disabled = !valid;
+    }
+
+    dateInput.addEventListener("input", checkFormValidity);
+    timeInput.addEventListener("input", checkFormValidity);
+
+    checkFormValidity();
+
     // LOGIN
-    //////////////////////////
     window.checkPassword = function(){
 
         const input = document.getElementById("password").value;
@@ -135,29 +140,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //////////////////////////
-    // ENTER clavier
-    //////////////////////////
     document.addEventListener("keydown", (e)=>{
         if(e.key === "Enter") checkPassword();
     });
 
-    //////////////////////////
     // REPONSE
-    //////////////////////////
     window.answer = function(choice){
-    
-        const date = document.getElementById("dateChoice").value;
-        const time = document.getElementById("timeChoice").value;
-    
+
+        const date = dateInput.value;
+        const time = timeInput.value;
+
         document.getElementById("questionBox").classList.add("hidden");
         document.getElementById("resultBox").classList.remove("hidden");
-    
+
         document.getElementById("resultText").innerText =
             "Choix : " + choice +
             "\nDate : " + (date || "non définie") +
             "\nHeure : " + (time || "non définie");
-    
+
         emailjs.send(
             CONFIG.emailjs.serviceID,
             CONFIG.emailjs.templateID,
@@ -171,15 +171,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
-       setTimeout(() => {
-        window.location.href = "about:blank";
+        setTimeout(() => {
+            document.body.innerHTML = "<h2 style='text-align:center;margin-top:40vh;'>Merci ❤️</h2>";
         }, 2000);
-        
     }
 
-    //////////////////////////
-    // BOUTON NON QUI FUIT
-    //////////////////////////
+    // NON qui fuit
     window.moveNo = function(){
 
         const btn = document.getElementById("noBtn");
@@ -207,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- LOGIN -->
 <div class="card" id="loginBox">
     <h2>Accès protégé</h2>
-    <input type="password" id="password" placeholder="Votre Date D'anniversaire (JJ/MM)">
+    <input type="password" id="password" placeholder="Date d'anniversaire (JJMM)">
     <button onclick="checkPassword()">Entrer</button>
     <div id="error"></div>
 </div>
@@ -225,7 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
         Lieu : <b>Place Dauphine, Paris</b>
     </p>
 
-    <button class="btn-yes" onclick="answer('OUI')">OUI</button>
+    <button class="btn-yes" id="yesBtn" onclick="answer('OUI')" disabled>
+        OUI
+    </button>
 
     <button class="btn-no" id="noBtn"
         onmouseover="moveNo()"
