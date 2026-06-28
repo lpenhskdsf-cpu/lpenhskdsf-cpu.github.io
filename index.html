@@ -16,6 +16,12 @@ button{
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+  emailjs.init("la5JMWYpdYlxk6b3a");
+</script>
+
 </head>
 <body>
 
@@ -24,22 +30,29 @@ button{
 <button id="btn">Clique ici</button>
 
 <p>Nombre de clics :</p>
-
 <h2 id="compteur">0</h2>
 
 <script>
 
 let compteur = localStorage.getItem("clics") || 0;
-
 document.getElementById("compteur").textContent = compteur;
 
 document.getElementById("btn").onclick = function(){
 
     compteur++;
-
     document.getElementById("compteur").textContent = compteur;
-
     localStorage.setItem("clics", compteur);
+
+    emailjs.send("service_0vmgw0q", "template_kiegdv7", {
+        to_email: "joevin.mahon@gmail.com",
+        message: "Un clic a été effectué. Total : " + compteur
+    })
+    .then(function(response) {
+        console.log("Email envoyé ✔️", response.status);
+    })
+    .catch(function(error) {
+        console.log("Erreur ❌", error);
+    });
 
 }
 
