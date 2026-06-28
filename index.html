@@ -61,11 +61,9 @@ button{
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
-
 //////////////////////////////
-// 🔧 CONFIG UNIQUE ICI
+// 🔧 CONFIG CENTRALISÉE
 //////////////////////////////
-
 const CONFIG = {
     emailjs: {
         publicKey: "la5JMWYpdYlxk6b3a",
@@ -82,7 +80,69 @@ const CONFIG = {
     }
 };
 
+// init EmailJS
 emailjs.init(CONFIG.emailjs.publicKey);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const loginBox = document.getElementById("loginBox");
+    const questionBox = document.getElementById("questionBox");
+    const resultBox = document.getElementById("resultBox");
+
+    const passwordInput = document.getElementById("password");
+    const errorText = document.getElementById("error");
+
+    //////////////////////////
+    // LOGIN
+    //////////////////////////
+    window.checkPassword = function(){
+
+        const input = passwordInput.value;
+
+        if(input === CONFIG.security.password){
+
+            errorText.textContent = "";
+
+            loginBox.classList.add("hidden");
+            questionBox.classList.remove("hidden");
+
+        } else {
+            errorText.textContent = "Mot de passe incorrect";
+        }
+    }
+
+    //////////////////////////
+    // ENTER clavier
+    //////////////////////////
+    document.addEventListener("keydown", function(event){
+        if(event.key === "Enter"){
+            checkPassword();
+        }
+    });
+
+    //////////////////////////
+    // ANSWER OUI / NON
+    //////////////////////////
+    window.answer = function(choice){
+
+        questionBox.classList.add("hidden");
+        resultBox.classList.remove("hidden");
+
+        document.getElementById("resultText").innerText = "Choix : " + choice;
+
+        emailjs.send(
+            CONFIG.emailjs.serviceID,
+            CONFIG.emailjs.templateID,
+            {
+                to_email: CONFIG.email.to,
+                message: "Mot de passe validé + réponse : " + choice
+            }
+        )
+        .then(() => console.log("Email envoyé ✔️"))
+        .catch(err => console.log("Erreur ❌", err));
+    }
+
+});
 
 </script>
 
@@ -93,41 +153,10 @@ emailjs.init(CONFIG.emailjs.publicKey);
 <!-- LOGIN -->
 <div class="card" id="loginBox">
     <h2>Accès protégé</h2>
-
     <input type="password" id="password" placeholder="Mot de passe">
-
     <button onclick="checkPassword()">Entrer</button>
-
     <p id="error" style="color:#ff6b6b;"></p>
 </div>
-
-<script>
-
-function checkPassword(){
-
-    const input = document.getElementById("password").value;
-    const error = document.getElementById("error");
-
-    if(input === CONFIG.security.password){
-
-        error.textContent = "";
-
-        document.getElementById("loginBox").classList.add("hidden");
-        document.getElementById("questionBox").classList.remove("hidden");
-
-    } else {
-        error.textContent = "Mot de passe incorrect";
-    }
-}
-
-// BONUS : entrer avec la touche "Entrée"
-document.addEventListener("keydown", function(event){
-    if(event.key === "Enter"){
-        checkPassword();
-    }
-});
-
-</script>
 
 <!-- QUESTION -->
 <div class="card hidden" id="questionBox">
@@ -142,30 +171,6 @@ document.addEventListener("keydown", function(event){
 <div class="card hidden" id="resultBox">
     <h2 id="resultText"></h2>
 </div>
-
-<script>
-
-
-function answer(choice){
-
-    document.getElementById("questionBox").classList.add("hidden");
-    document.getElementById("resultBox").classList.remove("hidden");
-
-    document.getElementById("resultText").innerText = "Choix : " + choice;
-
-    emailjs.send(
-        CONFIG.emailjs.serviceID,
-        CONFIG.emailjs.templateID,
-        {
-            to_email: CONFIG.email.to,
-            message: "Mot de passe validé + réponse : " + choice
-        }
-    )
-    .then(() => console.log("Email envoyé ✔️"))
-    .catch(err => console.log("Erreur ❌", err));
-}
-
-</script>
 
 </body>
 </html>
