@@ -101,11 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const startBlocked = "2026-07-30";
     const endBlocked = "2026-08-21";
 
-    // reset
+    // reset champs
     dateInput.value = "";
     timeInput.value = "";
 
-    // validation
     function checkFormValidity(){
 
         const date = dateInput.value;
@@ -119,6 +118,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         yesBtn.disabled = !valid;
         noBtn.disabled = !valid;
+
+        // reset position NON si invalide
+        if(!valid){
+            noBtn.style.position = "relative";
+            noBtn.style.left = "0px";
+            noBtn.style.top = "0px";
+        }
     }
 
     dateInput.addEventListener("input", checkFormValidity);
