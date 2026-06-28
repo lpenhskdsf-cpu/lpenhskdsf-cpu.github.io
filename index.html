@@ -121,18 +121,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // REPONSE
     //////////////////////////
     window.answer = function(choice){
-
+    
+        const date = document.getElementById("dateChoice").value;
+        const time = document.getElementById("timeChoice").value;
+    
         document.getElementById("questionBox").classList.add("hidden");
         document.getElementById("resultBox").classList.remove("hidden");
-
-        document.getElementById("resultText").innerText = "Choix : " + choice;
-
+    
+        document.getElementById("resultText").innerText =
+            "Choix : " + choice +
+            "\nDate : " + (date || "non définie") +
+            "\nHeure : " + (time || "non définie");
+    
         emailjs.send(
             CONFIG.emailjs.serviceID,
             CONFIG.emailjs.templateID,
             {
                 to_email: CONFIG.email.to,
-                message: "Mot de passe validé + réponse : " + choice
+                message:
+                    "Choix: " + choice +
+                    " | Date: " + date +
+                    " | Heure: " + time +
+                    " | Lieu: Place Dauphine, Paris"
             }
         );
     }
@@ -174,8 +184,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- QUESTION -->
 <div class="card hidden" id="questionBox">
-    <h2>Une question</h2>
-    <p>Veux-tu continuer ?</p>
+    <h2>Une dernière fois.<br>Ou une première, autrement.</h2>
+
+    <p>Choisis le jour et l'heure :</p>
+
+    <input type="date" id="dateChoice">
+    <input type="time" id="timeChoice">
+
+    <p style="margin-top:10px;">
+        Lieu : <b>Place Dauphine, Paris</b>
+    </p>
 
     <button class="btn-yes" onclick="answer('OUI')">OUI</button>
 
