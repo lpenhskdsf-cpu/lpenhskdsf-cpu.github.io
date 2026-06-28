@@ -92,6 +92,13 @@ emailjs.init(CONFIG.emailjs.publicKey);
 document.addEventListener("DOMContentLoaded", () => {
 
     const dateInput = document.getElementById("dateChoice");
+    const timeInput = document.getElementById("timeChoice");
+    
+    // reset à chaque ouverture
+    dateInput.value = "";
+    timeInput.value = "";
+
+    const dateInput = document.getElementById("dateChoice");
 
     // bornes interdites (format ISO correct)
     const startBlocked = "2026-07-30";
