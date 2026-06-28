@@ -91,9 +91,12 @@ emailjs.init(CONFIG.emailjs.publicKey);
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // reset à chaque ouverture
-    dateInput.value = "";
-    timeInput.value = "";
+    const dateInput = document.getElementById("dateChoice");
+    const timeInput = document.getElementById("timeChoice");
+
+    // sécurité : vérifier que les éléments existent
+    if(dateInput) dateInput.value = "";
+    if(timeInput) timeInput.value = "";
 
     const dateInput = document.getElementById("dateChoice");
 
