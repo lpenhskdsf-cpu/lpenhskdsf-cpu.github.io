@@ -2,72 +2,148 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Ma première page</title>
+<title>Page interactive</title>
 
 <style>
 body{
-    font-family:Arial;
-    text-align:center;
-    margin-top:100px;
+    font-family: Arial;
+    background: linear-gradient(120deg, #1e1e2f, #2b2b45);
+    color: white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
 }
+
+.card{
+    background: rgba(255,255,255,0.08);
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    width:320px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+input{
+    padding:10px;
+    width:90%;
+    margin-top:10px;
+    border-radius:8px;
+    border:none;
+    text-align:center;
+}
+
 button{
-    font-size:20px;
-    padding:15px 30px;
+    margin-top:15px;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-yes{ background:#4caf50; color:white; }
+.btn-no{ background:#f44336; color:white; }
+
+.hidden{ display:none; }
+
+.fade{
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
 }
 </style>
 
-<!-- =========================
-     CONFIG EMAILJS (ICI)
-========================= -->
-<script>
-const EMAILJS_PUBLIC_KEY = "la5JMWYpdYlxk6b3a";
-const EMAILJS_SERVICE_ID = "service_0vmgw0q";
-const EMAILJS_TEMPLATE_ID = "template_kiegdv7";
-const EMAIL_TO = "djomac25@gmail.com";
-</script>
-
-<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+//////////////////////////////
+// 🔧 CONFIG UNIQUE ICI
+//////////////////////////////
+
+const CONFIG = {
+    emailjs: {
+        publicKey: ""la5JMWYpdYlxk6b3a";",
+        serviceID: ""service_0vmgw0q";",
+        templateID: ""template_kiegdv7";"
+    },
+
+    security: {
+        password: "0412"
+    },
+
+    email: {
+        to: "joevin.mahon@gmail.com"
+    }
+};
+
+emailjs.init(CONFIG.emailjs.publicKey);
+
 </script>
 
 </head>
 
 <body>
 
-<h1>Bienvenue !</h1>
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+    <h2>Accès protégé</h2>
+    <input type="password" id="password" placeholder="Mot de passe">
+    <button onclick="checkPassword()">Entrer</button>
+</div>
 
-<button id="btn">Clique ici</button>
+<!-- QUESTION -->
+<div class="card hidden" id="questionBox">
+    <h2>Une question</h2>
+    <p>Veux-tu continuer ?</p>
 
-<p>Nombre de clics :</p>
-<h2 id="compteur">0</h2>
+    <button class="btn-yes" onclick="answer('OUI')">OUI</button>
+    <button class="btn-no" onclick="answer('NON')">NON</button>
+</div>
+
+<!-- RESULT -->
+<div class="card hidden" id="resultBox">
+    <h2 id="resultText"></h2>
+</div>
 
 <script>
 
-let compteur = localStorage.getItem("clics") || 0;
-document.getElementById("compteur").textContent = compteur;
+function checkPassword(){
 
-document.getElementById("btn").onclick = function(){
+    let input = document.getElementById("password").value;
 
-    // incrément compteur
-    compteur++;
-    document.getElementById("compteur").textContent = compteur;
-    localStorage.setItem("clics", compteur);
+    if(input === CONFIG.security.password){
 
-    // envoi email
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: EMAIL_TO,
-        message: "Un clic a été effectué. Total : " + compteur
-    })
-    .then(() => {
-        console.log("Email envoyé ✔️");
-    })
-    .catch((error) => {
-        console.log("Erreur ❌", error);
-    });
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("questionBox").classList.remove("hidden");
 
+    } else {
+        alert("Mot de passe incorrect");
+    }
+}
+
+function answer(choice){
+
+    document.getElementById("questionBox").classList.add("hidden");
+    document.getElementById("resultBox").classList.remove("hidden");
+
+    document.getElementById("resultText").innerText = "Choix : " + choice;
+
+    emailjs.send(
+        CONFIG.emailjs.serviceID,
+        CONFIG.emailjs.templateID,
+        {
+            to_email: CONFIG.email.to,
+            message: "Mot de passe validé + réponse : " + choice
+        }
+    )
+    .then(() => console.log("Email envoyé ✔️"))
+    .catch(err => console.log("Erreur ❌", err));
 }
 
 </script>
