@@ -93,19 +93,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dateInput = document.getElementById("dateChoice");
 
-    // min/max global (optionnel)
+    // bornes interdites (format ISO correct)
+    const startBlocked = "2026-07-30";
+    const endBlocked = "2026-08-21";
+    
+    // min/max global
     dateInput.min = "2026-01-01";
     dateInput.max = "2026-12-31";
     
     dateInput.addEventListener("input", () => {
     
-        const selected = new Date(dateInput.value);
-    
-        const startBlocked = new Date("2026-07-30");
-        const endBlocked = new Date("2026-08-21");
+        const selected = dateInput.value;
     
         if(selected >= startBlocked && selected <= endBlocked){
-            alert("Cette période est indisponible ❌");
+            alert("Cette période n'est pas disponible ❌");
             dateInput.value = "";
         }
     });
