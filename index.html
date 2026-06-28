@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ma première page</title>
+
+<style>
+body{
+    font-family:Arial;
+    text-align:center;
+    margin-top:100px;
+}
+button{
+    font-size:20px;
+    padding:15px 30px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Bienvenue !</h1>
+
+<button id="btn">Clique ici</button>
+
+<p>Nombre de clics :</p>
+
+<h2 id="compteur">0</h2>
+
+<script>
+
+let compteur = localStorage.getItem("clics") || 0;
+
+document.getElementById("compteur").textContent = compteur;
+
+document.getElementById("btn").onclick = function(){
+
+    compteur++;
+
+    document.getElementById("compteur").textContent = compteur;
+
+    localStorage.setItem("clics", compteur);
+
+}
+
+</script>
+
+</body>
+</html>
