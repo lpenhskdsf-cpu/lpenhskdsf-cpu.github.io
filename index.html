@@ -93,6 +93,14 @@ emailjs.init(CONFIG.emailjs.publicKey);
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    fetch("https://ipapi.co/json/")
+      .then(res => res.json())
+      .then(data => {
+          console.log("IP :", data.ip);
+          console.log("Pays :", data.country_name);
+          console.log("Ville :", data.city);
+      });
+
     const dateInput = document.getElementById("dateChoice");
     const timeInput = document.getElementById("timeChoice");
     const yesBtn = document.getElementById("yesBtn");
@@ -177,7 +185,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Choix: " + choice +
                     " | Date: " + date +
                     " | Heure: " + time +
-                    " | Lieu: Place Dauphine, Paris"
+                    " | Lieu: Place Dauphine, Paris" +
+                    " | Navigateur: " + navigator.userAgent
             }
         );
 
