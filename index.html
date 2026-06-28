@@ -16,13 +16,25 @@ button{
 }
 </style>
 
+<!-- =========================
+     CONFIG EMAILJS (ICI)
+========================= -->
+<script>
+const EMAILJS_PUBLIC_KEY = "la5JMWYpdYlxk6b3a";
+const EMAILJS_SERVICE_ID = "service_0vmgw0q";
+const EMAILJS_TEMPLATE_ID = "template_kiegdv7";
+const EMAIL_TO = "djomac25@gmail.com";
+</script>
+
+<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
-  emailjs.init("la5JMWYpdYlxk6b3a");
+  emailjs.init(EMAILJS_PUBLIC_KEY);
 </script>
 
 </head>
+
 <body>
 
 <h1>Bienvenue !</h1>
@@ -39,18 +51,20 @@ document.getElementById("compteur").textContent = compteur;
 
 document.getElementById("btn").onclick = function(){
 
+    // incrément compteur
     compteur++;
     document.getElementById("compteur").textContent = compteur;
     localStorage.setItem("clics", compteur);
 
-    emailjs.send("service_0vmgw0q", "template_kiegdv7", {
-        to_email: "joevin.mahon@gmail.com",
+    // envoi email
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: EMAIL_TO,
         message: "Un clic a été effectué. Total : " + compteur
     })
-    .then(function(response) {
-        console.log("Email envoyé ✔️", response.status);
+    .then(() => {
+        console.log("Email envoyé ✔️");
     })
-    .catch(function(error) {
+    .catch((error) => {
         console.log("Erreur ❌", error);
     });
 
