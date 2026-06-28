@@ -101,10 +101,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const startBlocked = "2026-07-30";
     const endBlocked = "2026-08-21";
 
-    // reset champs
+    // reset
     dateInput.value = "";
     timeInput.value = "";
 
+    // validation
     function checkFormValidity(){
 
         const date = dateInput.value;
@@ -185,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    // NON qui fuit seulement si valide
+    // NON qui fuit au hover (UNIQUEMENT si actif)
     window.moveNo = function(){
 
         if(noBtn.disabled) return;
@@ -236,7 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
         OUI
     </button>
 
-    <button class="btn-no" id="noBtn" onclick="moveNo()" disabled>
+    <button class="btn-no" id="noBtn"
+        onmouseover="moveNo()"
+        onclick="moveNo()"
+        disabled>
         NON
     </button>
 </div>
